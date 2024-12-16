@@ -97,9 +97,9 @@ namespace game1402_a2_starter
 
             rooms["Kitchen"].AddExit("south", "Fairy House");
         }
-        private void AddRoomItems() //Objects requirement, min 3. Need to add bedroom and kitchen objects
+        private void AddRoomItems()
         {
-            // Woods items
+            
             rooms["Woods"].AddItem(new Item(
                 "LargeStick",
                 "A sturdy oak branch about two feet long. It looks perfectly straight and strong enough to support weight."
@@ -115,14 +115,14 @@ namespace game1402_a2_starter
                 "An old, but well-preserved hemp rope. It's frayed at the edges but appears to be quite strong. "
             ));
 
-            // Fairy Portal items
+            
             rooms["Fairy Portal"].AddItem(new Item(
                 "Glasses",
                 "A pair of delicate circular glasses, they appear to glow... They seem to be crafted from some sort of crystalline material. " +
                 "Something urges you to put them on..."
             ));
 
-            // Fairy House items
+            
             rooms["Fairy House"].AddItem(new Item(
                 "Frog",
                 "A peculiar, well-dressed frog sitting on a velvet cushion." +
@@ -143,7 +143,7 @@ namespace game1402_a2_starter
                 "Door",
                 "A wooden door leading to what appears to be a kitchen." + "NORTH"
             ));
-            // Bedroom items
+            
             rooms["Bedroom"].AddItem(new Item(
                 "Light Switch",
                 "A simple switch mounted on the wall."
@@ -156,7 +156,7 @@ namespace game1402_a2_starter
                 "Cat",
                 "A large black cat stretches, and meows at you as if expecting something."
             ));
-            // Kitchen items
+            
             rooms["Kitchen"].AddItem(new Item(
                 "Light Switch",
                 "A simple switch mounted on the wall."
@@ -204,6 +204,13 @@ namespace game1402_a2_starter
                         TurnLight(false);
                         return;
                     }
+                }
+                if (parts[0].ToLower() == "talk" &&
+                    parts[1].ToLower() == "to" &&
+                    parts[2].ToLower() == "frog")
+                {
+                    TalkToFrog();
+                    return;
                 }
             }
             switch (command)
@@ -272,14 +279,18 @@ namespace game1402_a2_starter
                     "Default response"; //you will always do something when processing the string and then give a response
             Console.WriteLine(response); //what you tell the person after what they entered has been processed
         }
-        private void GoDirection(string direction) //go (direction) requirement
+        private void GoDirection(string direction) 
         {
 
             string destinationRoomName = player.CurrentRoom.GetExit(direction);
 
             if (destinationRoomName != null)
             {
-                // Special conditions for specific rooms
+                if (player.CurrentRoom.Name == "Fairy Portal" && destinationRoomName == "Woods")
+                {
+                    Console.WriteLine("The opening above seems to have sealed itself. You'll need to find another way back...");
+                    return;
+                }
                 if (destinationRoomName == "Fairy House" && !hasFairyHouseRevealed)
                 {
                     Console.WriteLine("Everything looks hazy and indistinct. You can't make out a clear path.");
@@ -362,11 +373,25 @@ namespace game1402_a2_starter
             }
             else
             {
-                Console.Clear();
                 Console.WriteLine("Inventory:");
                 foreach (var item in player.Inventory)
                 {
-                    Console.WriteLine($"- {item.Name}: {item.Description}");
+                    if (item.Name == "Recipe")
+                    {
+                        // Store the current console color
+                        ConsoleColor originalColor = Console.ForegroundColor;
+
+                        // Change text color to magenta for the recipe
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine($"- {item.Name}: {item.Description}");
+
+                        // Reset console color back to original
+                        Console.ForegroundColor = originalColor;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"- {item.Name}: {item.Description}");
+                    }
                 }
             }
         }
