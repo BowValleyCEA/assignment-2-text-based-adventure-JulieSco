@@ -11,17 +11,23 @@ namespace game1402_a2_starter
     //reference
     public class Room
     {
+        private string description;
         public string Name { get; private set; }
-        public string Description { get; private set; }
+        public string Description { get => description; }
         public List<Item> Items { get; private set; }
+        public Dictionary<string, string> Exits { get; private set; }
 
         public Room(string name, string description)
         {
             Name = name;
-            Description = description;
+            this.description = description;
             Items = new List<Item>();
+            Exits = new Dictionary<string, string>();
         }
-
+        public void UpdateDescription(string newDescription)
+        {
+            description = newDescription;
+        }
         public void AddItem(Item item)
         {
             Items.Add(item);
@@ -36,18 +42,22 @@ namespace game1402_a2_starter
         {
             Items.Remove(item);
         }
-    }
-    public class Item
-    {
-        public string Name { get; private set; }
-        public string Description { get; private set; }
 
-        public Item(string name, string description)
+        public void AddExit(string direction, string roomName)
         {
-            Name = name;
-            Description = description;
+            Exits[direction.ToLower()] = roomName;
+        }
+
+        public string GetExit(string direction)
+        {
+            if (Exits.ContainsKey(direction.ToLower()))
+            {
+                return Exits[direction.ToLower()];
+            }
+            return null;
         }
     }
+
     public class Player
     {
         public string Name { get; private set; }
@@ -63,6 +73,19 @@ namespace game1402_a2_starter
         public void AddToInventory(Item item)
         {
             Inventory.Add(item);
+        }
+
+    }
+
+    public class Item
+    {
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+
+        public Item(string name, string description)
+        {
+            Name = name;
+            Description = description;
         }
     }
 }
